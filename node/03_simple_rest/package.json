@@ -1,0 +1,17 @@
+{
+  "name": "03_simple_rest",
+  "version": "1.0.0",
+  "description": "simple rest api",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rest"
+  ],
+  "author": "erno",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
