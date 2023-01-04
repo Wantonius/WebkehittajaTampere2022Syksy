@@ -48,7 +48,7 @@ app.put("/api/shopping/:id",function(req,res) {
 		"type":req.body.type,
 		"count":req.body.count,
 		"price":req.body.price,
-		id:tempId
+		"id":tempId
 	}
 	for(let i=0;i<database.length;i++) {
 		if(tempId === database[i].id) {
