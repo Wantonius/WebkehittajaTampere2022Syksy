@@ -1,6 +1,7 @@
 import './App.css';
 import ShoppingForm from './components/ShoppingForm';
 import ShoppingList from './components/ShoppingList';
+import Navbar from './components/Navbar';
 import {useState,useEffect} from 'react';
 
 function App() {
@@ -93,6 +94,8 @@ function App() {
 		
 	return (
 		<div className="App">
+			<Navbar/>
+			<hr/>
 			<ShoppingForm addItem={addItem}/>
 			<ShoppingList list={state.list}/>
 		</div>
