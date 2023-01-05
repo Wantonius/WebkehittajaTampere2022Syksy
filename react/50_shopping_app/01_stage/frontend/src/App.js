@@ -48,6 +48,7 @@ function App() {
 						return;
 					case "additem":
 					case "removeitem":
+					case "edititem":
 						getList();
 						return;
 					default:
@@ -63,6 +64,9 @@ function App() {
 						return;
 					case "removeitem":
 						console.log("Failed to remove item. Server responded with a status "+response.status+" "+response.statusText);
+						return;
+					case "edititem":
+						console.log("Failed to edit item. Server responded with a status "+response.status+" "+response.statusText);
 						return;
 					default:
 						return;
@@ -110,13 +114,25 @@ function App() {
 			action:"removeitem"
 		})
 	}
+	
+	const editItem = (item) => {
+		setUrlRequest({
+			url:"/api/shopping/"+item.id,
+			request:{
+				method:"PUT",
+				headers:{"Content-Type":"application/json"},
+				body:JSON.stringify(item)
+			},
+			action:"edititem"
+		})
+	}
 		
 	return (
 		<div className="App">
 			<Navbar/>
 			<hr/>
 			<Routes>
-				<Route exact path="/"  element={<ShoppingList list={state.list} removeItem={removeItem}/>} /> 
+				<Route exact path="/"  element={<ShoppingList list={state.list} removeItem={removeItem} editItem={editItem}/>} /> 
 				<Route path="/form" element={<ShoppingForm addItem={addItem}/>} />			
 			</Routes>
 		</div>
