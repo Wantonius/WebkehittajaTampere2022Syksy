@@ -1,6 +1,6 @@
-import logo from './logo.svg';
 import './App.css';
 import ShoppingForm from './components/ShoppingForm';
+import ShoppingList from './components/ShoppingList';
 import {useState,useEffect} from 'react';
 
 function App() {
@@ -30,13 +30,27 @@ function App() {
 			}
 			if(response.ok) {
 				switch(urlRequest.action) {
+					case "getlist":
+						const data = await response.json();
+						if(!data) {
+							console.log("Failed to parse shopping data");
+							return;
+						}
+						setState({
+							list:data
+						})
+						return;
 					case "additem":
+						getList();
 						return;
 					default:
 						return;
 				}
 			} else {
 				switch(urlRequest.action) {
+					case "getlist":
+						console.log("Failed to fetch shopping list. Server responded with a status "+response.status+" "+response.statusText);
+						return;						
 					case "additem":
 						console.log("Failed to add item. Server responded with a status "+response.status+" "+response.statusText);
 						return;
@@ -50,7 +64,18 @@ function App() {
 		
 	},[urlRequest])
 	
-	// REST API
+	//REST API
+	
+	const getList = () => {
+		setUrlRequest({
+			url:"/api/shopping",
+			request:{
+				method:"GET"
+			},
+			action:"getlist"
+		})
+	}
+	
 	const addItem = (item) => {
 		setUrlRequest({
 			url:"/api/shopping",
@@ -69,6 +94,7 @@ function App() {
 	return (
 		<div className="App">
 			<ShoppingForm addItem={addItem}/>
+			<ShoppingList list={state.list}/>
 		</div>
 	);
 }
