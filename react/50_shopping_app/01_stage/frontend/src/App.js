@@ -47,6 +47,7 @@ function App() {
 						})
 						return;
 					case "additem":
+					case "removeitem":
 						getList();
 						return;
 					default:
@@ -59,6 +60,9 @@ function App() {
 						return;						
 					case "additem":
 						console.log("Failed to add item. Server responded with a status "+response.status+" "+response.statusText);
+						return;
+					case "removeitem":
+						console.log("Failed to remove item. Server responded with a status "+response.status+" "+response.statusText);
 						return;
 					default:
 						return;
@@ -96,13 +100,23 @@ function App() {
 		})
 		
 	}
+	
+	const removeItem = (id) => {
+		setUrlRequest({
+			url:"/api/shopping/"+id,
+			request:{
+				method:"DELETE"
+			},
+			action:"removeitem"
+		})
+	}
 		
 	return (
 		<div className="App">
 			<Navbar/>
 			<hr/>
 			<Routes>
-				<Route exact path="/"  element={<ShoppingList list={state.list}/>} /> 
+				<Route exact path="/"  element={<ShoppingList list={state.list} removeItem={removeItem}/>} /> 
 				<Route path="/form" element={<ShoppingForm addItem={addItem}/>} />			
 			</Routes>
 		</div>
