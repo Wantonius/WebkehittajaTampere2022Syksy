@@ -3,6 +3,7 @@ import ShoppingForm from './components/ShoppingForm';
 import ShoppingList from './components/ShoppingList';
 import Navbar from './components/Navbar';
 import {useState,useEffect} from 'react';
+import {Routes,Route,Navigate} from 'react-router-dom';
 
 function App() {
 	
@@ -17,6 +18,10 @@ function App() {
 	})
 	
 	// USEEFFECT
+	
+	useEffect(() => {
+		getList();
+	},[])
 	
 	useEffect(() => {
 		
@@ -96,8 +101,10 @@ function App() {
 		<div className="App">
 			<Navbar/>
 			<hr/>
-			<ShoppingForm addItem={addItem}/>
-			<ShoppingList list={state.list}/>
+			<Routes>
+				<Route exact path="/"  element={<ShoppingList list={state.list}/>} /> 
+				<Route path="/form" element={<ShoppingForm addItem={addItem}/>} />			
+			</Routes>
 		</div>
 	);
 }
