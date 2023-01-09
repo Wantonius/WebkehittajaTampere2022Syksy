@@ -2,6 +2,7 @@ import './App.css';
 import ShoppingForm from './components/ShoppingForm';
 import ShoppingList from './components/ShoppingList';
 import Navbar from './components/Navbar';
+import LoginPage from './components/LoginPage';
 import {useState,useEffect} from 'react';
 import {Routes,Route,Navigate} from 'react-router-dom';
 
@@ -105,6 +106,9 @@ function App() {
 					case "edititem":
 						getList();
 						return;
+					case "register":
+						setError("Register success!");
+						return;
 					default:
 						return;
 				}
@@ -127,6 +131,14 @@ function App() {
 					case "edititem":
 						setError("Failed to edit item."+errorMessage);
 						return;
+					case "register":
+						if(response.status === 409) {
+							setError("Username already in use!");
+							return;
+						} else {
+							setError("Register failed."+errorMessage);
+							return;
+						}
 					default:
 						return;
 				}
@@ -197,17 +209,58 @@ function App() {
 			action:"edititem"
 		})
 	}
-		
-	return (
-		<div className="App">
-			<Navbar/>
-			<hr/>
-			<Routes>
-				<Route exact path="/"  element={<ShoppingList list={state.list} removeItem={removeItem} editItem={editItem}/>} /> 
-				<Route path="/form" element={<ShoppingForm addItem={addItem}/>} />			
-			</Routes>
-		</div>
-	);
+	
+	const register = (user) => {
+		setUrlRequest({
+			url:"/register",
+			request:{
+				method:"POST",
+				headers:{"Content-Type":"application/json"},
+				body:JSON.stringify(user)
+			},
+			action:"register"
+		})
+	}
+	
+	const login = (user) => {}
+
+	let message = <h4></h4>
+	if(state.loading) {
+		message = <h4>Loading ...</h4>
+	}
+	if(state.error) {
+		message = <h4>{state.error}</h4>
+	}
+	if(state.isLogged) {
+		return (
+			<div className="App">
+				<Navbar/>
+				<div style={{height:40, textAlign:"center"}}>
+					{message}
+				</div>
+				<hr/>
+				<Routes>
+					<Route exact path="/"  element={<ShoppingList list={state.list} removeItem={removeItem} editItem={editItem}/>} /> 
+					<Route path="/form" element={<ShoppingForm addItem={addItem}/>} />
+					<Route path="*" element={<Navigate to="/"/>}/>
+				</Routes>
+			</div>
+		);
+	} else {
+		return (
+			<div className="App">
+				<Navbar/>
+				<div style={{height:40, textAlign:"center"}}>
+					{message}
+				</div>
+				<hr/>
+				<Routes>
+					<Route exact path="/"  element={<LoginPage register={register} login={login} setError={setError}/>} />
+					<Route path="*" element={<Navigate to="/"/>}/>
+				</Routes>				
+			</div>
+		)
+	}
 }
 
 export default App;
