@@ -124,6 +124,9 @@ function App() {
 						})
 						getList(temp.token);
 						return;
+					case "logout":
+						clearState("");
+						return;
 					default:
 						return;
 				}
@@ -156,6 +159,9 @@ function App() {
 						}
 					case "login":
 						setError("Login failed."+errorMessage);
+						return;
+					case "logout":
+						clearState("Server responded with an error. Logging you out!");
 						return;
 					default:
 						return;
@@ -251,6 +257,19 @@ function App() {
 			action:"login"
 		})		
 	}
+	
+	const logout = () => {
+		setUrlRequest({
+			url:"/logout",
+			request:{
+				method:"POST",
+				headers:{
+					"token":state.token
+				}
+			},
+			action:"logout"
+		})
+	}
 
 	//RENDERING
 
@@ -264,7 +283,7 @@ function App() {
 	if(state.isLogged) {
 		return (
 			<div className="App">
-				<Navbar/>
+				<Navbar logout={logout} isLogged={state.isLogged}/>
 				<div style={{height:25, textAlign:"center"}}>
 					{message}
 				</div>
@@ -279,7 +298,7 @@ function App() {
 	} else {
 		return (
 			<div className="App">
-				<Navbar/>
+				<Navbar logout={logout} isLogged={state.isLogged}/>
 				<div style={{height:25, textAlign:"center"}}>
 					{message}
 				</div>
