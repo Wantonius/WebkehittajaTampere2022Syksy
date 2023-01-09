@@ -109,6 +109,21 @@ function App() {
 					case "register":
 						setError("Register success!");
 						return;
+					case "login":
+						let temp = await response.json();
+						if(!temp) {
+							setError("Failed to parse login information. Try again later.");
+							return
+						}
+						setState((state) => {
+							return {
+								...state,
+								isLogged:true,
+								token:temp.token
+							}
+						})
+						getList(temp.token);
+						return;
 					default:
 						return;
 				}
@@ -139,6 +154,9 @@ function App() {
 							setError("Register failed."+errorMessage);
 							return;
 						}
+					case "login":
+						setError("Login failed."+errorMessage);
+						return;
 					default:
 						return;
 				}
@@ -222,7 +240,19 @@ function App() {
 		})
 	}
 	
-	const login = (user) => {}
+	const login = (user) => {
+		setUrlRequest({
+			url:"/login",
+			request:{
+				method:"POST",
+				headers:{"Content-Type":"application/json"},
+				body:JSON.stringify(user)
+			},
+			action:"login"
+		})		
+	}
+
+	//RENDERING
 
 	let message = <h4></h4>
 	if(state.loading) {
@@ -235,7 +265,7 @@ function App() {
 		return (
 			<div className="App">
 				<Navbar/>
-				<div style={{height:40, textAlign:"center"}}>
+				<div style={{height:25, textAlign:"center"}}>
 					{message}
 				</div>
 				<hr/>
@@ -250,7 +280,7 @@ function App() {
 		return (
 			<div className="App">
 				<Navbar/>
-				<div style={{height:40, textAlign:"center"}}>
+				<div style={{height:25, textAlign:"center"}}>
 					{message}
 				</div>
 				<hr/>
