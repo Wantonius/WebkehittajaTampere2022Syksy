@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
 const userModel = require("./models/user");
+const sessionModel = require("./models/session");
 
 let app = express();
 
@@ -43,21 +44,34 @@ isUserLogged = (req,res,next) => {
 	if(!req.headers.token) {
 		return res.status(403).json({message:"Forbidden"})
 	}
-	for(let i=0;i<loggedSessions.length;i++) {
-		if(req.headers.token === loggedSessions[i].token) {
-			let now = Date.now();
-			if(now > loggedSessions[i].ttl) {
-				loggedSessions.splice(i,1);
-				return res.status(403).json({message:"Forbidden"});
-			} else {
-				loggedSessions[i].ttl = now + time_to_live_diff;
-				req.session = {};
-				req.session.user = loggedSessions[i].user;
-				return next();
-			}
+	sessionModel.findOne({"token":req.headers.token},function(err,session) {
+		if(err) {
+			console.log("Failed to find session. Reason",err);
+			return res.status(403).json({message:"Forbidden"})
 		}
-	}
-	return res.status(403).json({message:"Forbidden"});
+		if(!session) {
+			return res.status(403).json({message:"Forbidden"})
+		}
+		let now = Date.now();
+		if(now > session.ttl) {
+			sessionModel.deleteOne({"_id":session._id},function(err) {
+				if(err) {
+					console.log("Failed to delete session. Reason",err)
+				}
+				return res.status(403).json({message:"Forbidden"})
+			})
+		} else {
+			session.ttl = now + time_to_live_diff;
+			req.session = {};
+			req.session.user = session.user
+			session.save(function(err) {
+				if(err) {
+					console.log("Failed to resave session. Reason",err)
+				}
+				return next();
+			})
+		}
+	})
 }
 
 //LOGIN API
@@ -106,30 +120,38 @@ app.post("/login",function(req,res) {
 	if(req.body.username.length < 4 || req.body.password.length < 8) {
 		return res.status(400).json({message:"Bad request"});
 	}
-	for(let i=0;i<registeredUsers.length;i++) {
-		if(req.body.username === registeredUsers[i].username) {
-			bcrypt.compare(req.body.password,registeredUsers[i].password,function(err,success) {
+	userModel.findOne({"username":req.body.username}, function(err,user) {
+		if(err) {
+			console.log("Failed to find user login. Reason",err)
+			return res.status(500).json({message:"Internal server error"})
+		}
+		if(!user) {
+			return res.status(401).json({message:"Unauthorized"})
+		}
+		bcrypt.compare(req.body.password,user.password,function(err,success) {
+			if(err) {
+				console.log("Comparing passwords failed. Reason",err)
+				return res.status(500).json({message:"Internal server error"})
+			}
+			if(!success) {
+				return res.status(401).json({message:"Unauthorized"})
+			}
+			let token = createToken();
+			let now = Date.now();
+			let session = new sessionModel({
+				user:req.body.username,
+				ttl:now+time_to_live_diff,
+				token:token
+			})
+			session.save(function(err) {
 				if(err) {
-					console.log(err);
+					console.log("Saving session failed. Reason",err)
 					return res.status(500).json({message:"Internal server error"})
 				}
-				if(!success) {
-					return res.status(401).json({message:"Unauthorized"});
-				}
-				let token = createToken();
-				let now = Date.now();
-				let session = {
-					user:req.body.username,
-					token:token,
-					ttl:now+time_to_live_diff
-				}
-				loggedSessions.push(session);
-				return res.status(200).json({token:token});
+				return res.status(200).json({token:token})
 			})
-			return;
-		}
-	}
-	return res.status(401).json({message:"Unauthorized"});
+		})
+	})
 })
 
 app.post("/logout",function(req,res) {
