@@ -8,10 +8,7 @@ const sessionModel = require("./models/session");
 
 let app = express();
 
-//LOGIN DATABASES
 
-let registeredUsers = [];
-let loggedSessions = [];
 const time_to_live_diff = 3600000;
 
 //MONGO CONNECTION
@@ -26,6 +23,8 @@ mongoose.connect(url).then(
 () => console.log("Connected to mongo atlas"),
 (error) => console.log("Failed to connect to mongo atlas. Reason",error)
 )
+
+mongoose.set("toJSON",{virtuals:true});
 
 //BODYPARSER
 
@@ -158,13 +157,12 @@ app.post("/logout",function(req,res) {
 	if(!req.headers.token) {
 		return res.status(404).json({message:"Not found"})
 	}
-	for(let i=0;i<loggedSessions.length;i++) {
-		if(req.headers.token === loggedSessions[i].token) {
-			loggedSessions.splice(i,1);
-			return res.status(200).json({message:"Logged out"})
+	sessionModel.deleteOne({"token":req.headers.token},function(err){
+		if(err) {
+			console.log("Failed to remove session with token "+req.headers.token+". Reason",err)
 		}
-	}
-	return res.status(404).json({message:"Not found"})
+		return res.status(200).json({message:"Logged out!"})
+	})
 })
 
 app.use("/api",isUserLogged,apiroute);
