@@ -95,10 +95,12 @@ function App() {
 							return;
 						}
 						setState((state) => {
-							return {
+							let tempData = {
 								...state,
 								list:data
 							}
+							saveToStorage(tempData);
+							return tempData;
 						})
 						return;
 					case "additem":
@@ -116,11 +118,13 @@ function App() {
 							return
 						}
 						setState((state) => {
-							return {
+							let tempData = {
 								...state,
 								isLogged:true,
 								token:temp.token
 							}
+							saveToStorage(tempData);
+							return tempData;
 						})
 						getList(temp.token);
 						return;
