@@ -59,6 +59,29 @@ export const login = (user) => {
 	}
 }
 
+export const logout = (token) => {
+	return async (dispatch) => {
+		let request = {
+			method:"POST",
+			headers:{
+				token:token
+			}
+		}
+		dispatch(loading());
+		const response = await fetch("/logout",request);
+		dispatch(stopLoading());
+		if(!response) {
+			dispatch(logoutFailed("Server never responded. Logging you out."))
+			return;
+		}
+		if(response.ok) {
+			dispatch(logoutSuccess());
+		} else {
+			dispatch(logoutFailed("Server responded with a status "+response.status+" "+response.statusText+". Logging you out."))
+		}
+	}
+}
+
 //ACTION CREATORS
 
 export const loading = () => {
@@ -96,6 +119,19 @@ const loginSuccess = (token) => {
 const loginFailed = (error) => {
 	return {
 		type:actionConstants.LOGIN_FAILED,
+		error:error
+	}
+}
+
+const logoutSuccess = () => {
+	return {
+		type:actionConstants.LOGOUT_SUCCESS
+	}
+}
+
+export const logoutFailed = (error) => {
+	return {
+		type:actionConstants.LOGOUT_FAILED,
 		error:error
 	}
 }
