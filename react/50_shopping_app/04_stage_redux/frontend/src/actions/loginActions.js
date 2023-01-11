@@ -30,6 +30,35 @@ export const register = (user) => {
 	}
 }
 
+export const login = (user) => {
+	return async (dispatch) => {
+		let request = {
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify(user)
+		}
+		dispatch(loading());
+		const response = await fetch("/login",request);
+		dispatch(stopLoading());
+		if(!response) {
+			dispatch(loginFailed("Server never responded. Login failed."))
+			return;
+		}
+		if(response.ok) {
+			let data = await response.json();
+			if(!data) {
+				dispatch(loginFailed("Failed to parse login information. Login failed. Try again later."))
+				return;
+			}
+			dispatch(loginSuccess(data.token))
+		} else {
+			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
+		}
+	}
+}
+
 //ACTION CREATORS
 
 export const loading = () => {
@@ -53,6 +82,20 @@ const registerSuccess = () => {
 export const registerFailed = (error) => {
 	return {
 		type:actionConstants.REGISTER_FAILED,
+		error:error
+	}
+}
+
+const loginSuccess = (token) => {
+	return {
+		type:actionConstants.LOGIN_SUCCESS,
+		token:token
+	}
+}
+
+const loginFailed = (error) => {
+	return {
+		type:actionConstants.LOGIN_FAILED,
 		error:error
 	}
 }
