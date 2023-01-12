@@ -3,8 +3,12 @@ import * as actionConstants from './actionConstants';
 
 //ASYNC THUNKS
 
-export const getList = (token) => {
+export const getList = (token,search) => {
 	return async (dispatch) => {
+		let url = "/api/shopping";
+		if(search) {
+			url = url + "?type="+search
+		}
 		let request = {
 			method:"GET",
 			headers:{
@@ -12,7 +16,7 @@ export const getList = (token) => {
 			}
 		}
 		dispatch(loading());
-		const response = await fetch("/api/shopping",request);
+		const response = await fetch(url,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchListFailed("Failed loading shopping information. Server never responded. Try again later"))

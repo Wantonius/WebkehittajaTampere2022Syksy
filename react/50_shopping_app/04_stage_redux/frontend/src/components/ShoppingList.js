@@ -3,13 +3,17 @@ import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useDispatch,useSelector} from 'react-redux';
-import {remove,edit} from '../actions/shoppingActions';
+import {remove,edit,getList} from '../actions/shoppingActions';
 
 const ShoppingList = (props) => {
 
 	const [state,setState] = useState({
 		removeIndex:-1,
 		editIndex:-1
+	})
+	
+	const [search,setSearch] = useState({
+		type:""
 	})
 	
 	const dispatch = useDispatch();
@@ -45,6 +49,16 @@ const ShoppingList = (props) => {
 		dispatch(edit(appState.login.token,item));
 		changeMode("cancel");
 	}
+	
+	const onChange = (event) => {
+		setSearch({
+			type:event.target.value
+		})
+	}
+	
+	const searchByType = () => {
+		dispatch(getList(appState.login.token,search.type))
+	}
 
 	let items = appState.shopping.list.map((item,index) => {
 		if(state.removeIndex === index) {
@@ -62,6 +76,20 @@ const ShoppingList = (props) => {
 		)
 	})
 	return(
+	<>
+		<div style={{
+			width:"30%",
+			margin:"auto"
+		}}>
+			<label htmlFor="type" className="form-label">Search by type</label>
+			<input type="text"
+					name="type"
+					id="type"
+					className="form-control"
+					onChange={onChange}
+					value={search.type}/>
+			<button onClick={searchByType} className="btn btn-primary">Search</button>
+		</div>
 		<table className="table table-striped">
 			<thead>
 				<tr>
@@ -76,6 +104,7 @@ const ShoppingList = (props) => {
 			{items}
 			</tbody>
 		</table>
+	</>
 	)
 }
 
