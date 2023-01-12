@@ -10,7 +10,7 @@ import loginReducer from './reducers/loginReducer';
 import shoppingReducer from './reducers/shoppingReducer';
 import thunk from 'redux-thunk';
 
-const rootReducer = combineReducer({
+const rootReducer = combineReducers({
 	login:loginReducer,
 	shopping:shoppingReducer
 })

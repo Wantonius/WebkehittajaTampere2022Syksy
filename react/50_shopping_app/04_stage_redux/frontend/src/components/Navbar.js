@@ -8,7 +8,7 @@ const Navbar = (props) => {
 	
 	const dispatch = useDispatch();
 	
-	if(appState.isLogged) {
+	if(appState.login.isLogged) {
 		return(
 			<nav className="navbar navbar-expand-lg navbar-light bg-light">
 				<p className="navbar-brand" style={{marginLeft:10}}>Shopping App</p>
@@ -20,7 +20,7 @@ const Navbar = (props) => {
 						<Link to="/form">Add new item</Link>
 					</li>
 					<li className="nav-item" style={{marginLeft:10}}>
-					<Link to="/" onClick={() => dispatch(logout(appState.token))}>Logout</Link></li>
+					<Link to="/" onClick={() => dispatch(logout(appState.login.token))}>Logout</Link></li>
 				</ul>
 			</nav>
 		)

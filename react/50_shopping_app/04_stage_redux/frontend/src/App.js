@@ -70,8 +70,8 @@ function App() {
 		if(sessionStorage.getItem("state")) {
 			let state = JSON.parse(sessionStorage.getItem("state"));
 			setState(state);
-			if(appState.isLogged) {
-				getList(appState.token);
+			if(appState.login.isLogged) {
+				getList(appState.login.token);
 			}
 		}		
 	},[])
@@ -183,7 +183,7 @@ function App() {
 	//REST API
 	
 	const getList = (token) => {
-		let tempToken = appState.token;
+		let tempToken = appState.login.token;
 		if(token) {
 			tempToken = token;
 		}
@@ -206,7 +206,7 @@ function App() {
 				method:"POST",
 				headers:{
 					"Content-Type":"application/json",
-					"token":appState.token
+					"token":appState.login.token
 				},
 				body:JSON.stringify(item)
 			},
@@ -221,7 +221,7 @@ function App() {
 			request:{
 				method:"DELETE",
 				headers:{
-					"token":appState.token
+					"token":appState.login.token
 				}
 			},
 			action:"removeitem"
@@ -234,7 +234,7 @@ function App() {
 			request:{
 				method:"PUT",
 				headers:{"Content-Type":"application/json",
-						"token":appState.token},
+						"token":appState.login.token},
 				body:JSON.stringify(item)
 			},
 			action:"edititem"
@@ -246,13 +246,20 @@ function App() {
 	//RENDERING
 
 	let message = <h4></h4>
-	if(appState.loading) {
+	if(appState.login.loading) {
 		message = <h4>Loading ...</h4>
 	}
-	if(appState.error) {
-		message = <h4>{appState.error}</h4>
+	let error = ""
+	if(appState.shopping.error) {
+		error = appState.shopping.error;
 	}
-	if(appState.isLogged) {
+	if(appState.login.error) {
+		error = appState.login.error;
+	}
+	if(error) {
+		message = <h4>{error}</h4>
+	}
+	if(appState.login.isLogged) {
 		return (
 			<div className="App">
 				<Navbar />

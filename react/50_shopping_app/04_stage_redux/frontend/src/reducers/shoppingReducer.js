@@ -13,7 +13,7 @@ const getInitialState = () => {
 }
 
 const saveToStorage = (state) => {
-	sessionStorage.setItem("shoppingstate",JSON.parse(state));
+	sessionStorage.setItem("shoppingstate",JSON.stringify(state));
 }
 
 const initialState = getInitialState();
