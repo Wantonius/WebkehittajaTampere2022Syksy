@@ -12,6 +12,9 @@ let id = 100;
 
 router.get("/shopping",function(req,res) {
 	let query = {"user":req.session.user}
+	if(req.query.type) {
+		query.type = req.query.type.toLowerCase();
+	}
 	itemModel.find(query,function(err,items) {
 		if(err) {
 			console.log("Failed to find items. Reason",err);
@@ -29,7 +32,7 @@ router.post("/shopping",function(req,res) {
 		return res.status(400).json({message:"Bad request"})
 	}
 	let item = new itemModel({
-		"type":req.body.type,
+		"type":req.body.type.toLowerCase(),
 		"count":req.body.count,
 		"price":req.body.price,
 		"user":req.session.user
@@ -62,7 +65,7 @@ router.put("/shopping/:id",function(req,res) {
 		return res.status(400).json({message:"Bad request"})
 	}
 	let item = {
-		"type":req.body.type,
+		"type":req.body.type.toLowerCase(),
 		"count":req.body.count,
 		"price":req.body.price,
 		"user":req.session.user
