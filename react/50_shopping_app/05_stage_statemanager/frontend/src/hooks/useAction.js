@@ -83,6 +83,18 @@ const useAction = () => {
 						})
 						getList();
 						return;
+					case "remove":
+						dispatch({
+							type:actionConstants.REMOVE_ITEM_SUCCESS
+						})
+						getList();
+						return;
+					case "edit":
+						dispatch({
+							type:actionConstants.EDIT_ITEM_SUCCESS
+						})
+						getList();
+						return;
 					default:
 						return;
 				}
@@ -133,6 +145,18 @@ const useAction = () => {
 							error:"Failed to add new item. "+errorMessage
 						})
 						return;
+					case "remove":
+						dispatch({
+							type:actionConstants.REMOVE_ITEM_FAILED,
+							error:"Failed to remove item. "+errorMessage
+						})
+						return;
+					case "edit":
+						dispatch({
+							type:actionConstants.EDIT_ITEM_FAILED,
+							error:"Failed to edit item. "+errorMessage
+						})
+						return;					
 					default:
 						return;
 				}
@@ -219,7 +243,34 @@ const useAction = () => {
 		})
 	}
 	
-	return {register,setError,login,logout,getList,add}
+	const remove = (id) => {
+		setState({
+			url:"/api/shopping/"+id,
+			request:{
+				method:"DELETE",
+				headers:{
+					"token":token
+				}
+			},
+			action:"remove"
+		})
+	}
+	
+	const edit = (item) => {
+		setState({
+			url:"/api/shopping/"+item.id,
+			request:{
+				method:"PUT",
+				headers:{
+					"Content-Type":"application/json",
+					"token":token
+				},
+				body:JSON.stringify(item)
+			},
+			action:"edit"
+		})
+	}
+	return {register,setError,login,logout,getList,add,remove,edit}
 }
 
 export default useAction;

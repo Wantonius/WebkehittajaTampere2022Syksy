@@ -3,6 +3,7 @@ import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import useAppState from '../hooks/useAppState';
+import useAction from '../hooks/useAction';
 
 const ShoppingList = (props) => {
 
@@ -10,6 +11,8 @@ const ShoppingList = (props) => {
 		removeIndex:-1,
 		editIndex:-1
 	})
+	
+	const {remove,edit} = useAction();
 	
 	const {list} = useAppState();
 	
@@ -35,12 +38,12 @@ const ShoppingList = (props) => {
 	}
 
 	const removeItem = (id) => {
-		props.removeItem(id);
+		remove(id);
 		changeMode("cancel");
 	}
 	
 	const editItem = (item) => {
-		props.editItem(item);
+		edit(item);
 		changeMode("cancel");
 	}
 
