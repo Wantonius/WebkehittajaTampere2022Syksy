@@ -1,9 +1,11 @@
 import {Link} from 'react-router-dom';
 import useAppState from '../hooks/useAppState';
+import useAction from '../hooks/useAction';
 
 const Navbar = (props) => {
 	
 	const {isLogged} = useAppState();
+	const {logout} = useAction();
 	
 	if(isLogged) {
 		return(
@@ -17,7 +19,7 @@ const Navbar = (props) => {
 						<Link to="/form">Add new item</Link>
 					</li>
 					<li className="nav-item" style={{marginLeft:10}}>
-					<Link to="/" onClick={props.logout}>Logout</Link></li>
+					<Link to="/" onClick={logout}>Logout</Link></li>
 				</ul>
 			</nav>
 		)

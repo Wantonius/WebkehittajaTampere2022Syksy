@@ -58,6 +58,11 @@ const useAction = () => {
 							token:data.token
 						});
 						return;
+					case "logout":
+						dispatch({
+							type:actionConstants.LOGOUT_SUCCESS
+						})
+						return;
 					default:
 						return;
 				}
@@ -81,6 +86,12 @@ const useAction = () => {
 						dispatch({
 							type:actionConstants.LOGIN_FAILED,
 							error:"Login failed. "+errorMessage
+						})
+						return;
+					case "logout":
+						dispatch({
+							type:actionConstants.LOGOUT_FAILED,
+							error:errorMessage+". Logging you out."
 						})
 						return;
 					default:
@@ -128,7 +139,20 @@ const useAction = () => {
 		})
 	}
 	
-	return {register,setError,login}
+	const logout = () => {
+		setState({
+			url:"/logout",
+			request:{
+				method:"POST",
+				headers:{
+					token:token
+				}
+			},
+			action:"logout"
+		})
+	}
+	
+	return {register,setError,login,logout}
 }
 
 export default useAction;
