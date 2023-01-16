@@ -87,8 +87,15 @@ const useAction = () => {
 		})
 	}
 	
+	const setError = (error) => {
+		dispatch({
+			type:actionConstants.REGISTER_FAILED,
+			error:error
+		})
+	}
 	
-	return {register}
+	
+	return {register,setError}
 }
 
 export default useAction;
