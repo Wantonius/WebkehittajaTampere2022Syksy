@@ -3,13 +3,21 @@ import ShoppingForm from './components/ShoppingForm';
 import ShoppingList from './components/ShoppingList';
 import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
-import {useState,useEffect} from 'react';
+import {useEffect} from 'react';
 import {Routes,Route,Navigate} from 'react-router-dom';
 import useAppState from './hooks/useAppState';
-
+import useAction from './hooks/useAction';
 function App() {
 	
 	const state = useAppState();
+
+	const {getList} = useAction();
+	
+	useEffect(() => {
+		if(state.isLogged) {
+			getList();
+		}
+	},[state.isLogged])
 
 	//RENDERING
 
