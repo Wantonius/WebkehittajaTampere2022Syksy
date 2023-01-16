@@ -1,7 +1,11 @@
 import {Link} from 'react-router-dom';
+import useAppState from '../hooks/useAppState';
 
 const Navbar = (props) => {
-	if(props.isLogged) {
+	
+	const {isLogged} = useAppState();
+	
+	if(isLogged) {
 		return(
 			<nav className="navbar navbar-expand-lg navbar-light bg-light">
 				<p className="navbar-brand" style={{marginLeft:10}}>Shopping App</p>

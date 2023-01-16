@@ -44,8 +44,22 @@ const useAction = () => {
 							type:actionConstants.REGISTER_SUCCESS
 						})
 						return;
+					case "login":
+						let data = await response.json();
+						if(!data) {
+							dispatch({
+								type:actionConstants.LOGIN_FAILED,
+								error:"Failed to parse login information. Try again later."
+							})
+							return;
+						}
+						dispatch({
+							type:actionConstants.LOGIN_SUCCESS,
+							token:data.token
+						});
+						return;
 					default:
-						return state;
+						return;
 				}
 			} else {
 				let errorMessage = "Server responded with a status "+response.status+" "+response.statusText
@@ -63,8 +77,14 @@ const useAction = () => {
 							error:"Register failed. "+errorMessage
 						})
 						return;
+					case "login":
+						dispatch({
+							type:actionConstants.LOGIN_FAILED,
+							error:"Login failed. "+errorMessage
+						})
+						return;
 					default:
-						return state;
+						return;
 				}
 			}
 		}
@@ -94,8 +114,21 @@ const useAction = () => {
 		})
 	}
 	
+	const login = (user) => {
+		setState({
+			"url":"/login",
+			"request":{
+				method:"POST",
+				headers:{
+					"Content-Type":"application/json"
+				},
+				body:JSON.stringify(user)
+			},
+			"action":"login"	
+		})
+	}
 	
-	return {register,setError}
+	return {register,setError,login}
 }
 
 export default useAction;

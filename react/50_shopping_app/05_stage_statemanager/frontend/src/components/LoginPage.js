@@ -8,7 +8,7 @@ const LoginPage = (props) => {
 		password:""
 	})
 	
-	const {register,setError} = useAction();
+	const {register,setError,login} = useAction();
 
 	const onChange = (event) => {
 		setState((state) => {
@@ -31,7 +31,7 @@ const LoginPage = (props) => {
 		if(event.target.name === "register") {
 			register(user)
 		} else {
-			props.login(user)
+			login(user)
 		}
 	}
 	
