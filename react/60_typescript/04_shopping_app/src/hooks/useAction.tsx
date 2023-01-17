@@ -46,7 +46,7 @@ const listReducer = (state:AppState,action:Action):AppState => {
 	}
 }
 
-const useAction = ():{ShoppingItem[],boolean,(item:ShoppingItem) => void,(id:number) => void} => {
+const useAction = ():[ShoppingItem[],boolean,(item:ShoppingItem) => void,(id:number) => void] => {
 	
 	const [urlRequest,setUrlRequest] = useState<FetchState>({
 		request:new Request("",{})
@@ -76,7 +76,7 @@ const useAction = ():{ShoppingItem[],boolean,(item:ShoppingItem) => void,(id:num
 					const list = await response.json();
 					dispatch({
 						type:"FETCH_DONE",
-						list:list
+						payload:list
 					})
 				} else {
 					getList();
@@ -89,4 +89,39 @@ const useAction = ():{ShoppingItem[],boolean,(item:ShoppingItem) => void,(id:num
 		fetchData();
 		
 	},[urlRequest.request]);
-} 
+
+	const getList = () => {
+		let tempRequest = new Request("/api/shopping",{
+			method:"GET"
+		})
+		setUrlRequest({
+			request:tempRequest
+		})
+	}
+	
+	const addItem = (item:ShoppingItem) => {
+		let tempRequest = new Request("/api/shopping",{
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify(item)
+		})
+		setUrlRequest({
+			request:tempRequest
+		})
+	}
+	
+	const removeItem = (id:number) => {
+		let tempRequest = new Request("/api/shopping/"+id,{
+			method:"DELETE"
+		})
+		setUrlRequest({
+			request:tempRequest
+		})
+	}
+	
+	return [state.list,state.loading,addItem,removeItem]
+}
+
+export default useAction; 
