@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import {register} from '../actions/loginActions';
+import {register,login} from '../actions/loginActions';
 import {useDispatch} from 'react-redux';
 import {AnyAction} from 'redux';
 import {ThunkDispatch} from 'redux-thunk';
@@ -28,11 +28,18 @@ const LoginPage:React.FC<{}> = (props) => {
 		})
 	}
 	
-	const onSubmit = (event:React.SyntheticEvent) => {
+	const onRegister = (event:React.SyntheticEvent) => {
 		event.preventDefault();
 		let user = new User(state.username,state.password)
 		dispatch(register(user));
 	}
+	
+	const onLogin = (event:React.SyntheticEvent) => {
+		event.preventDefault();
+		let user = new User(state.username,state.password)
+		dispatch(login(user));
+	}
+	
 	return(
 		<form>
 			<label htmlFor="username">Username</label>
@@ -49,7 +56,8 @@ const LoginPage:React.FC<{}> = (props) => {
 					onChange={onChange}
 					value={state.password}/>
 			<br/>
-			<button onClick={onSubmit} name="register">Register</button>
+			<button onClick={onRegister} name="register">Register</button>
+			<button onClick={onLogin} name="login">Login</button>
 		</form>
 	)
 }
